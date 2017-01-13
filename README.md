@@ -22,5 +22,9 @@ _.find([{x:1}, {x:2}, {x:3}], v => v.y == 3);
 _.find([{x:1}, {x:2}, {x:3}], v => v.x == 3);
 ```
 
+Code is expected to type check unless an `$ExpectError` directive is used. In this case, an error is required (lack of an error from TypeScript is a test failure).
+
+An `$ExpectType` directive tests the type of the expression on the next line. This prevents unexpected `any` or `{}` types from creeping in.
+
 [1]: https://github.com/DefinitelyTyped/DefinitelyTyped/blob/0f756aca1642eaf49998565788caf18ef635271e/underscore/underscore-tests.ts
 [FlowTyped]: https://github.com/flowtype/flow-typed/blob/a880b140e32d9d562abbe3924b2c10a583b3a6e1/definitions/npm/underscore_v1.x.x/test_underscore-v1.js
