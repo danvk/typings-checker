@@ -97,7 +97,7 @@ for (const diagnostic of allDiagnostics) {
     nodedAssertion.error = diagnostic;
   } else {
     let message = ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n');
-    console.error(`${tsFile}:${line}: Unexpected error\n  ${message}`);
+    console.error(`${tsFile}:${line+1}: Unexpected error\n  ${message}`);
     numFailures++;
   }
 }
@@ -106,12 +106,12 @@ for (const {node, assertion, type, error} of nodedAssertions) {
   const { line, character } = source.getLineAndCharacterOfPosition(node.pos);
   if (assertion.kind === 'error') {
     if (!error) {
-      console.error(`${tsFile}:${line}: Expected error ${assertion.pattern}\n`)
+      console.error(`${tsFile}:${line+1}: Expected error ${assertion.pattern}\n`)
       numFailures++;
     } else {
       const message = ts.flattenDiagnosticMessageText(error.messageText, '\n');
       if (message.indexOf(assertion.pattern) === -1) {
-        console.error(`${tsFile}:${line}: Expected error\n  ${assertion.pattern}\nbut got:\n  ${message}\n`);
+        console.error(`${tsFile}:${line+1}: Expected error\n  ${assertion.pattern}\nbut got:\n  ${message}\n`);
         numFailures++;
       } else {
         numSuccesses++;
@@ -120,7 +120,7 @@ for (const {node, assertion, type, error} of nodedAssertions) {
   } else if (assertion.kind === 'type') {
     const typeString = checker.typeToString(type);
     if (typeString !== assertion.type) {
-      console.error(`${tsFile}:${line}: Expected type\n  ${assertion.type}\nbut got:\n  ${typeString}\n`);
+      console.error(`${tsFile}:${line+1}: Expected type\n  ${assertion.type}\nbut got:\n  ${typeString}\n`);
       numFailures++;
     } else {
       numSuccesses++;

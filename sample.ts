@@ -1,3 +1,6 @@
+// Uncomment this to get some errors:
+// let _: any;
+
 // $ExpectType number
 _.find([1, 2, 3], x => x * 1 == 3);
 // $ExpectError Operator '==' cannot be applied to types 'number' and 'string'.
