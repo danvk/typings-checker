@@ -1,3 +1,4 @@
+#!/usr/bin/env ts-node
 import * as ts from 'typescript';
 import * as _ from 'lodash';
 import { scanAllTokens } from 'tslint';
@@ -128,7 +129,7 @@ for (const {node, assertion, type, error} of nodedAssertions) {
   }
 }
 
-console.log(`Successes: ${numSuccesses}`);
-console.log(`Failures: ${numFailures}`);
+const numTotal = numSuccesses + numFailures;
+console.log(`${tsFile}: ${numSuccesses} / ${numTotal} checks passed.`);
 
 process.exit(numFailures);
