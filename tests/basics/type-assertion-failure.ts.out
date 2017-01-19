@@ -1,0 +1,6 @@
+tests/basics/type-assertion-failure.ts:3: Expected type
+  string
+but got:
+  number
+
+tests/basics/type-assertion-failure.ts: 0 / 1 checks passed.

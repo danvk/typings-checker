@@ -1,0 +1,20 @@
+tests/underscore-any.ts:4: Expected type
+  number
+but got:
+  any
+
+tests/underscore-any.ts:7: Expected error Operator '==' cannot be applied to types 'number' and 'string'.
+
+tests/underscore-any.ts:9: Expected type
+  number
+but got:
+  any
+
+tests/underscore-any.ts:11: Expected error Property 'y' does not exist on type '{ x: number; }'.
+
+tests/underscore-any.ts:13: Expected type
+  { x: number; }
+but got:
+  any
+
+tests/underscore-any.ts: 0 / 5 checks passed.
