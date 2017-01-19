@@ -1,4 +1,4 @@
-# typings-checker
+# typings-checker [![CircleCI](https://circleci.com/gh/danvk/typings-checker.svg?style=svg)](https://circleci.com/gh/danvk/typings-checker)
 
 The [tests in DefinitelyTyped][1] verify that correct code type checks.
 But this is an easy bar to meet: giving a module an `any` type is sufficient to make
