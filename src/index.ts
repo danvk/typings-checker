@@ -11,7 +11,7 @@
 
 import * as ts from 'typescript';
 
-import { extractAssertions, attachNodesToAssertions, generateReport } from './checker';
+import checkFile from './checker';
 
 const [,, tsFile] = process.argv;
 
@@ -21,17 +21,14 @@ const host = ts.createCompilerHost(options, true);
 
 const program = ts.createProgram([tsFile], options, host);
 
-const checker = program.getTypeChecker();
-
 const source = program.getSourceFile(tsFile);
 const scanner = ts.createScanner(
     ts.ScriptTarget.ES5, false, ts.LanguageVariant.Standard, source.getFullText());
 
-const assertions = extractAssertions(scanner, source);
-const nodedAssertions = attachNodesToAssertions(source, checker, assertions);
-
+const checker = program.getTypeChecker();
 const diagnostics = ts.getPreEmitDiagnostics(program);
-const report = generateReport(checker, nodedAssertions, diagnostics);
+
+const report = checkFile(source, scanner, checker, diagnostics);
 
 for (const failure of report.failures) {
   const { line } = failure;
