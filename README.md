@@ -26,7 +26,12 @@ Code is expected to type check unless an `$ExpectError` directive is used. In th
 
 An `$ExpectType` directive tests the type of the expression on the next line. This prevents unexpected `any` or `{}` types from creeping in.
 
-Usage:
+## Usage
+
+    npm install -g typings-checker
+    typings-checker your-test.ts
+
+## Development
 
 ```
 $ npm install -g yarn ts-node
