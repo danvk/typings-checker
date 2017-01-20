@@ -1,3 +1,4 @@
 tests/basics/unexpected-error.ts:5: Unexpected error
   Property 'c' does not exist on type '{ a: string; b: number; }'.
+
 tests/basics/unexpected-error.ts: 0 / 1 checks passed.
