@@ -36,7 +36,7 @@ An `$ExpectType` directive tests the type of the expression on the next line. Th
 ```
 $ npm install -g yarn ts-node
 $ yarn
-$ ts-node typecheck.ts sample.ts
+$ ts-node src/index.ts sample.ts
 Successes: 6
 Failures: 0
 ```
