@@ -30,13 +30,13 @@ const scanner = ts.createScanner(
 interface TypeAssertion {
   kind: 'type';
   type: string;
-  line: number;
+  line: number;  // line that the assertion applies to; 0-based.
 }
 
 interface ErrorAssertion {
   kind: 'error';
   pattern: string;
-  line: number;
+  line: number;  // line that the assertion applies to; 0-based.
 }
 
 type Assertion = TypeAssertion | ErrorAssertion;
@@ -68,7 +68,12 @@ scanAllTokens(scanner, () => {
   }
 });
 
-function collectNodes(node: ts.Node, assertions: Assertion[], nodedAssertions: NodedAssertion[] = []): NodedAssertion[] {
+// Attach ts.Nodes to the assertions.
+function collectNodes(
+  node: ts.Node,
+  assertions: Assertion[],
+  nodedAssertions: NodedAssertion[] = []
+): NodedAssertion[] {
   if (node.kind >= ts.SyntaxKind.VariableStatement &&
       node.kind <= ts.SyntaxKind.DebuggerStatement) {
     const pos = node.getStart();
@@ -90,6 +95,7 @@ function collectNodes(node: ts.Node, assertions: Assertion[], nodedAssertions: N
 }
 
 const nodedAssertions = collectNodes(source, assertions);
+
 if (assertions.length) {
   console.error(assertions);
   throw new Error('Unable to attach nodes to all assertions.');
@@ -115,15 +121,15 @@ for (const diagnostic of allDiagnostics) {
 }
 
 for (const {node, assertion, type, error} of nodedAssertions) {
-  const { line, character } = source.getLineAndCharacterOfPosition(node.pos);
+  const displayLine = assertion.line + 1;
   if (assertion.kind === 'error') {
     if (!error) {
-      console.error(`${tsFile}:${line+1}: Expected error ${assertion.pattern}\n`)
+      console.error(`${tsFile}:${displayLine}: Expected error ${assertion.pattern}\n`)
       numFailures++;
     } else {
       const message = ts.flattenDiagnosticMessageText(error.messageText, '\n');
       if (message.indexOf(assertion.pattern) === -1) {
-        console.error(`${tsFile}:${line+1}: Expected error\n  ${assertion.pattern}\nbut got:\n  ${message}\n`);
+        console.error(`${tsFile}:${displayLine}: Expected error\n  ${assertion.pattern}\nbut got:\n  ${message}\n`);
         numFailures++;
       } else {
         numSuccesses++;
@@ -132,7 +138,7 @@ for (const {node, assertion, type, error} of nodedAssertions) {
   } else if (assertion.kind === 'type') {
     const typeString = checker.typeToString(type);
     if (typeString !== assertion.type) {
-      console.error(`${tsFile}:${line+1}: Expected type\n  ${assertion.type}\nbut got:\n  ${typeString}\n`);
+      console.error(`${tsFile}:${displayLine}: Expected type\n  ${assertion.type}\nbut got:\n  ${typeString}\n`);
       numFailures++;
     } else {
       numSuccesses++;
