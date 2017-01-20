@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 /**
  * This script reads a TypeScript file and verifies that it produces the expected types and errors.
  *
