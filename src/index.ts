@@ -11,7 +11,6 @@
 
 import * as ts from 'typescript';
 import * as _ from 'lodash';
-import { scanAllTokens } from 'tslint';
 
 const [,, tsFile] = process.argv;
 
@@ -49,11 +48,11 @@ interface NodedAssertion {
 }
 
 const assertions = [] as Assertion[];
-scanAllTokens(scanner, () => {
+while (scanner.scan() !== ts.SyntaxKind.EndOfFileToken) {
   if (scanner.getToken() === ts.SyntaxKind.SingleLineCommentTrivia) {
     const commentText = scanner.getTokenText();
     const m = commentText.match(/^\/\/ \$Expect(Type|Error) (.*)/);
-    if (!m) return;
+    if (!m) continue;
 
     const pos = scanner.getTokenPos();
     let { line } = source.getLineAndCharacterOfPosition(pos);
@@ -66,7 +65,7 @@ scanAllTokens(scanner, () => {
       assertions.push({ kind: 'error', pattern: text, line });
     }
   }
-});
+}
 
 // Attach ts.Nodes to the assertions.
 function collectNodes(
