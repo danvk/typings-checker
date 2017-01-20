@@ -107,7 +107,6 @@ let numFailures = 0;
 let numSuccesses = 0;
 
 for (const diagnostic of allDiagnostics) {
-  const pos = diagnostic.start;
   let { line } = diagnostic.file.getLineAndCharacterOfPosition(diagnostic.start);
 
   const nodedAssertion = _.find(nodedAssertions, {assertion: {line}});
@@ -120,7 +119,7 @@ for (const diagnostic of allDiagnostics) {
   }
 }
 
-for (const {node, assertion, type, error} of nodedAssertions) {
+for (const {assertion, type, error} of nodedAssertions) {
   const displayLine = assertion.line + 1;
   if (assertion.kind === 'error') {
     if (!error) {
