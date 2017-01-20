@@ -38,3 +38,7 @@ jspm_packages
 
 # editor
 .vscode/
+
+# Generated JS files
+src/*.js
+src/*.js.map

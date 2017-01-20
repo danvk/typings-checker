@@ -1,27 +1,34 @@
 {
   "name": "typings-checker",
   "version": "1.0.0",
-  "description": "",
-  "main": "typecheck.ts",
+  "description": "Positive and negative assertions about TypeScript types and errors",
+  "main": "src/index.js",
   "scripts": {
-    "test": "tsc && ./update-tests.sh"
+    "test": "./update-tests.sh"
+  },
+  "bin": {
+    "typings-checker": "src/index.js"
   },
   "author": "Dan Vanderkam (danvdk@gmail.com)",
   "license": "ISC",
+  "tags": [
+    "typescript",
+    "typings",
+    "definitelytyped"
+  ],
   "devDependencies": {
     "@types/chai": "^3.4.34",
+    "@types/lodash": "^4.14.47",
     "@types/mocha": "^2.2.36",
     "@types/node": "^7.0.0",
+    "@types/underscore": "^1.7.36",
     "chai": "^3.5.0",
     "mocha": "^3.2.0",
-    "ts-node": "^2.0.0",
-    "typescript": "^2.1.4"
+    "ts-node": "^2.0.0"
   },
   "dependencies": {
-    "@types/lodash": "^4.14.47",
-    "@types/underscore": "^1.7.36",
     "lodash": "^4.17.4",
     "tslint": "^4.3.1",
-    "underscore": "^1.8.3"
+    "typescript": "^2.1.4"
   }
 }

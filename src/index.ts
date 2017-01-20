@@ -1,10 +1,20 @@
-#!/usr/bin/env ts-node
+/**
+ * This script reads a TypeScript file and verifies that it produces the expected types and errors.
+ *
+ * Usage:
+ *
+ *     typings-checker yourtsfile.ts
+ *
+ * The exit code indicates whether all assertions passed.
+ */
+
 import * as ts from 'typescript';
 import * as _ from 'lodash';
 import { scanAllTokens } from 'tslint';
 
 const [,, tsFile] = process.argv;
 
+// TODO: read options from a tsconfig.json file.
 const options: ts.CompilerOptions = {};
 const host = ts.createCompilerHost(options, true);
 
