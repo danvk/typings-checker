@@ -2,6 +2,7 @@
 import * as ts from 'typescript';
 import * as _ from 'lodash';
 import { scanAllTokens } from 'tslint';
+declare var process: any;
 
 const [,, tsFile] = process.argv;
 
