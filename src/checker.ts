@@ -60,15 +60,23 @@ export interface Report {
 export function extractAssertions(scanner: ts.Scanner, source: ts.SourceFile): Assertion[] {
   const assertions = [] as Assertion[];
 
+  let isFirstTokenOnLine = true;
+  let lastLine = -1;
+
   while (scanner.scan() !== ts.SyntaxKind.EndOfFileToken) {
+    const pos = scanner.getTokenPos();
+    let { line } = source.getLineAndCharacterOfPosition(pos);
+    isFirstTokenOnLine = (line !== lastLine);
+    lastLine = line;
+
     if (scanner.getToken() === ts.SyntaxKind.SingleLineCommentTrivia) {
       const commentText = scanner.getTokenText();
       const m = commentText.match(/^\/\/ \$Expect(Type|Error) (.*)/);
       if (!m) continue;
 
-      const pos = scanner.getTokenPos();
-      let { line } = source.getLineAndCharacterOfPosition(pos);
-      line++;  // the assertion applies to the next line.
+      if (isFirstTokenOnLine) {
+        line++;  // the assertion applies to the next line.
+      }
 
       const [, kind, text] = m;
       if (kind === 'Type') {
@@ -88,12 +96,11 @@ export function attachNodesToAssertions(
 ): NodedAssertion[] {
   const nodedAssertions = [] as NodedAssertion[];
 
+  // Match assertions to the first node that appears on the line they apply to.
   function collectNodes(node: ts.Node) {
-    if (node.kind >= ts.SyntaxKind.VariableStatement &&
-        node.kind <= ts.SyntaxKind.DebuggerStatement) {
+    if (node.kind !== ts.SyntaxKind.SourceFile) {
       const pos = node.getStart();
       const { line } = source.getLineAndCharacterOfPosition(pos);
-
       const assertionIndex = _.findIndex(assertions, {line});
       if (assertionIndex >= 0) {
         const assertion = assertions[assertionIndex];
@@ -182,4 +189,20 @@ export function generateReport(
   failures.sort((a, b) => a.line - b.line);
 
   return { numSuccesses, failures };
+}
+
+/**
+ * Check a single TypeScript source file for typings assertions and errors.
+ *
+ * The file passes the checks if report.failures.length === 0.
+ */
+export default function checkFile(
+  source: ts.SourceFile,
+  scanner: ts.Scanner,
+  checker: ts.TypeChecker,
+  diagnostics: ts.Diagnostic[]
+): Report {
+  const assertions = extractAssertions(scanner, source);
+  const nodedAssertions = attachNodesToAssertions(source, checker, assertions);
+  return generateReport(checker, nodedAssertions, diagnostics);
 }
