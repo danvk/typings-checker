@@ -108,6 +108,7 @@ export function attachNodesToAssertions(
       const pos = node.getStart();
       const { line } = source.getLineAndCharacterOfPosition(pos);
       const assertionIndex = _.findIndex(assertions, {line});
+      // console.warn(`checked for assertions at line ${line}: ${assertionIndex}`);
       if (assertionIndex >= 0) {
         const assertion = assertions[assertionIndex];
         const type = checker.getTypeAtLocation(node.getChildren()[0]);
@@ -122,7 +123,14 @@ export function attachNodesToAssertions(
 
   collectNodes(source);
   if (assertions.length) {
-    console.error(assertions.map(o => _.update(o, 'line', (i: number) => i + 1)));
+    let prettyAssertions = assertions.map(o => {
+      let msg = {
+        type: `$ExpectType ${(<TypeAssertion>o).type}`,
+        error: `$ExpectError ${(<ErrorAssertion>o).pattern}`,
+      }[o.kind];
+      return `${o.line+1}: ${msg}`;
+    });
+    console.error(JSON.stringify(prettyAssertions, null, '\t'));
     throw new Error('Unable to attach nodes to all assertions.');
   }
 
