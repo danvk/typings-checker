@@ -1,24 +1,24 @@
 import * as ts from 'typescript';
 
-interface LineNumber {
+export interface LineNumber {
   line: number;  // 0-based
 }
 
-interface IAssertion extends LineNumber {
+export interface IAssertion extends LineNumber {
   kind: string;
 }
 
-interface TypeAssertion extends IAssertion {
+export interface TypeAssertion extends IAssertion {
   kind: 'type';
   type: string;
 }
 
-interface ErrorAssertion extends IAssertion {
+export interface ErrorAssertion extends IAssertion {
   kind: 'error';
   pattern: string;
 }
 
-type Assertion = TypeAssertion | ErrorAssertion;
+export type Assertion = TypeAssertion | ErrorAssertion;
 
 export interface NodedAssertion {
   assertion: Assertion;
@@ -53,7 +53,7 @@ export interface MissingErrorFailure extends IFailure {
   message: string;
 }
 
-type Failure = WrongTypeFailure | UnexpectedErrorFailure | WrongErrorFailure | MissingErrorFailure;
+export type Failure = WrongTypeFailure | UnexpectedErrorFailure | WrongErrorFailure | MissingErrorFailure;
 
 export interface Report {
   numSuccesses: number;
