@@ -1,65 +1,6 @@
 import * as ts from 'typescript';
 import * as _ from 'lodash';
-
-interface LineNumber {
-  line: number;  // 0-based
-}
-
-interface IAssertion extends LineNumber {
-  kind: string;
-}
-
-interface TypeAssertion extends IAssertion {
-  kind: 'type';
-  type: string;
-}
-
-interface ErrorAssertion extends IAssertion {
-  kind: 'error';
-  pattern: string;
-}
-
-type Assertion = TypeAssertion | ErrorAssertion;
-
-export interface NodedAssertion {
-  assertion: Assertion;
-  node: ts.Node;
-  type: ts.Type;
-  error?: ts.Diagnostic;
-}
-
-export interface IFailure extends LineNumber {
-  type: string;
-}
-
-export interface WrongTypeFailure extends IFailure {
-  type: 'WRONG_TYPE';
-  expectedType: string;
-  actualType: string;
-}
-
-export interface UnexpectedErrorFailure extends IFailure {
-  type: 'UNEXPECTED_ERROR';
-  message: string;
-}
-
-export interface WrongErrorFailure extends IFailure {
-  type: 'WRONG_ERROR';
-  expectedMessage: string;
-  actualMessage: string;
-}
-
-export interface MissingErrorFailure extends IFailure {
-  type: 'MISSING_ERROR';
-  message: string;
-}
-
-type Failure = WrongTypeFailure | UnexpectedErrorFailure | WrongErrorFailure | MissingErrorFailure;
-
-export interface Report {
-  numSuccesses: number;
-  failures: Failure[];
-}
+import { Assertion, TypeAssertion, ErrorAssertion, Failure, WrongTypeFailure, UnexpectedErrorFailure, WrongErrorFailure, MissingErrorFailure, NodedAssertion, Report } from './types';
 
 // Extract information about the type/error assertions in a source file.
 // The scanner should be positioned at the start of the file.
@@ -124,10 +65,11 @@ export function attachNodesToAssertions(
   collectNodes(source);
   if (assertions.length) {
     let prettyAssertions = assertions.map(o => {
-      let msg = {
+      const errorMap: { [k: string]: string } = {
         type: `$ExpectType ${(<TypeAssertion>o).type}`,
         error: `$ExpectError ${(<ErrorAssertion>o).pattern}`,
-      }[o.kind];
+      };
+      let msg: string = <string> errorMap[o.kind];
       return `${o.line+1}: ${msg}`;
     });
     console.error(JSON.stringify(prettyAssertions, null, '\t'));
