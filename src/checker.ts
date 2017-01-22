@@ -83,6 +83,7 @@ export function generateReport(
   checker: ts.TypeChecker,
   nodedAssertions: NodedAssertion[],
   diagnostics: ts.Diagnostic[],
+  source: ts.SourceFile,
 ): Report {
   const failures = [] as Failure[];
   let numSuccesses = 0;
@@ -105,13 +106,18 @@ export function generateReport(
   }
 
   // Go through and check all the assertions.
-  for (const {assertion, type, error} of nodedAssertions) {
+  for (const noded of nodedAssertions) {
+    let { assertion, type, error, node } = noded;
+    let { pos, end } = node;
+    let code = source.text.substring(pos, end);
     const line = assertion.line;
+    // let base = { code, line };
     if (assertion.kind === 'error') {
       if (!error) {
         failures.push({
           type: 'MISSING_ERROR',
           line,
+          code,
           message: assertion.pattern
         });
       } else {
@@ -120,6 +126,7 @@ export function generateReport(
           failures.push({
             type: 'WRONG_ERROR',
             line,
+            code,
             expectedMessage: assertion.pattern,
             actualMessage: message,
           });
@@ -133,6 +140,7 @@ export function generateReport(
         failures.push({
           type: 'WRONG_TYPE',
           line,
+          code,
           expectedType: assertion.type,
           actualType,
         })
@@ -160,5 +168,5 @@ export default function checkFile(
 ): Report {
   const assertions = extractAssertions(scanner, source);
   const nodedAssertions = attachNodesToAssertions(source, checker, assertions);
-  return generateReport(checker, nodedAssertions, diagnostics);
+  return generateReport(checker, nodedAssertions, diagnostics, source);
 }

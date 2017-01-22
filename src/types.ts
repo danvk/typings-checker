@@ -28,6 +28,7 @@ export interface NodedAssertion {
 }
 
 export interface IFailure extends LineNumber {
+  code?: string;
   type: string;
 }
 

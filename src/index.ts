@@ -16,12 +16,15 @@ let argv = require('yargs')
   .alias('l', 'noLines')
   .describe('l', 'skip line numbers in output to keep it more diff-friendly')
 
+  .alias('v', 'verbose')
+  .describe('v', 'also print relevant code')
+
   .argv;
 
 import checkFile from './checker';
 
 const [tsFile] = argv._;
-const { noLines } = argv;
+const { noLines, verbose } = argv;
 
 // read options from a tsconfig.json file.
 let host = ts.createCompilerHost({}, true);
@@ -47,7 +50,7 @@ const diagnostics = ts.getPreEmitDiagnostics(program);
 const report = checkFile(source, scanner, checker, diagnostics);
 
 for (const failure of report.failures) {
-  const { line } = failure;
+  const { line, code } = failure;
   let message: string;
   switch (failure.type) {
     case 'UNEXPECTED_ERROR':
@@ -63,7 +66,7 @@ for (const failure of report.failures) {
       message = `Expected type\n  ${failure.expectedType}\nbut got:\n  ${failure.actualType}`;
       break;
   }
-  console.error(`${tsFile}:${noLines ? '' : ((line + 1) + ':')}: ${message}\n`);
+  console.error(`${tsFile}:${noLines ? '' : ((line + 1) + ':')}${verbose && code ? code + '\n' : ''}\n${message}\n`);
 }
 
 const numFailures = report.failures.length;
