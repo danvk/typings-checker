@@ -4,6 +4,7 @@
   "description": "Positive and negative assertions about TypeScript types and errors",
   "main": "src/index.js",
   "scripts": {
+    "prepublish": "tsc ./src/index.ts",
     "test": "./update-tests.sh"
   },
   "bin": {
