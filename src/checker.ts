@@ -64,12 +64,16 @@ export function extractAssertions(scanner: ts.Scanner, source: ts.SourceFile): A
   let lastLine = -1;
 
   while (scanner.scan() !== ts.SyntaxKind.EndOfFileToken) {
+    const token = scanner.getToken();
+    if (token === ts.SyntaxKind.WhitespaceTrivia) continue;  // ignore leading whitespace.
+
     const pos = scanner.getTokenPos();
     let { line } = source.getLineAndCharacterOfPosition(pos);
+
     isFirstTokenOnLine = (line !== lastLine);
     lastLine = line;
 
-    if (scanner.getToken() === ts.SyntaxKind.SingleLineCommentTrivia) {
+    if (token === ts.SyntaxKind.SingleLineCommentTrivia) {
       const commentText = scanner.getTokenText();
       const m = commentText.match(/^\/\/ \$Expect(Type|Error) (.*)/);
       if (!m) continue;

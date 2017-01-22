@@ -9,5 +9,11 @@ done
 
 # This shows changes and sets the exit code.
 set -o errexit
-git status
 git --no-pager diff -- tests
+
+git status
+if [ -n "$(git status --porcelain)" ]; then
+  # this will catch a missing .ts.out file, for example.
+  echo Unexpected changes
+  exit 1
+fi
