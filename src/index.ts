@@ -66,7 +66,7 @@ for (const failure of report.failures) {
       message = `Expected type\n  ${failure.expectedType}\nbut got:\n  ${failure.actualType}`;
       break;
   }
-  console.error(`${tsFile}:${noLines ? '' : ((line + 1) + ':')}${verbose && code ? code + '\n' : ''}\n${message}\n`);
+  console.error(`${tsFile}:${noLines ? '' : ((line + 1) + ':')}${verbose && code ? code + '\n\n' : ' '}${message}\n`);
 }
 
 const numFailures = report.failures.length;
