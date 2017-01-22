@@ -147,7 +147,8 @@ export function generateReport(
 
   // Attach errors to nodes; if this isn't possible, then the error was unexpected.
   for (const diagnostic of diagnostics) {
-    let { line } = diagnostic.file.getLineAndCharacterOfPosition(diagnostic.start);
+    console.error(diagnostic);
+    let line = diagnostic.file && diagnostic.file.getLineAndCharacterOfPosition(diagnostic.start).line;
 
     const nodedAssertion = _.find(nodedAssertions, {assertion: {line}});
     if (nodedAssertion) {
