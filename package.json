@@ -29,7 +29,9 @@
   },
   "dependencies": {
     "lodash": "^4.17.4",
-    "typescript": "^2.1.4",
     "yargs": "^6.6.0"
+  },
+  "peerDependencies": {
+    "typescript": "2.x"
   }
 }
