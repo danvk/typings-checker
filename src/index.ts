@@ -34,6 +34,10 @@ if (options) {
 const program = ts.createProgram([tsFile], options, host);
 
 const source = program.getSourceFile(tsFile);
+if (!source) {
+  console.error(`could not load content of ${tsFile}`);
+  process.exit(1);
+}
 const scanner = ts.createScanner(
     ts.ScriptTarget.ES5, false, ts.LanguageVariant.Standard, source.getFullText());
 
