@@ -10,10 +10,18 @@
  */
 
 import * as ts from 'typescript';
+let argv = require('yargs')
+  .usage('Usage: <file> [options]')
+
+  .alias('l', 'noLines')
+  .describe('l', 'skip line numbers in output to keep it more diff-friendly')
+
+  .argv;
 
 import checkFile from './checker';
 
-const [,, tsFile] = process.argv;
+const [tsFile] = argv._;
+const { noLines } = argv;
 
 // read options from a tsconfig.json file.
 let host = ts.createCompilerHost({}, true);
@@ -51,7 +59,7 @@ for (const failure of report.failures) {
       message = `Expected type\n  ${failure.expectedType}\nbut got:\n  ${failure.actualType}`;
       break;
   }
-  console.error(`${tsFile}:${line + 1}: ${message}\n`);
+  console.error(`${tsFile}:${noLines ? '' : (line + 1) + ':'}: ${message}\n`);
 }
 
 const numFailures = report.failures.length;

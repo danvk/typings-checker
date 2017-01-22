@@ -22,12 +22,14 @@
     "@types/lodash": "^4.14.47",
     "@types/mocha": "^2.2.36",
     "@types/node": "^7.0.0",
+    "@types/yargs": "^6.5.0",
     "chai": "^3.5.0",
     "mocha": "^3.2.0",
     "ts-node": "^2.0.0"
   },
   "dependencies": {
     "lodash": "^4.17.4",
-    "typescript": "^2.1.4"
+    "typescript": "^2.1.4",
+    "yargs": "^6.6.0"
   }
 }
