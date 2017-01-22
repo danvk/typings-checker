@@ -1,16 +1,22 @@
 import * as ts from 'typescript';
 import * as _ from 'lodash';
 
-interface TypeAssertion {
-  kind: 'type';
-  type: string;
-  line: number;  // line that the assertion applies to; 0-based.
+interface LineNumber {
+  line: number;  // 0-based
 }
 
-interface ErrorAssertion {
+interface IAssertion extends LineNumber {
+  kind: string;
+}
+
+interface TypeAssertion extends IAssertion {
+  kind: 'type';
+  type: string;
+}
+
+interface ErrorAssertion extends IAssertion {
   kind: 'error';
   pattern: string;
-  line: number;  // line that the assertion applies to; 0-based.
 }
 
 type Assertion = TypeAssertion | ErrorAssertion;
@@ -22,28 +28,28 @@ export interface NodedAssertion {
   error?: ts.Diagnostic;
 }
 
-interface LineNumber {
-  line: number;  // 0-based
+export interface IFailure extends LineNumber {
+  type: string;
 }
 
-export interface WrongTypeFailure extends LineNumber {
+export interface WrongTypeFailure extends IFailure {
   type: 'WRONG_TYPE';
   expectedType: string;
   actualType: string;
 }
 
-export interface UnexpectedErrorFailure extends LineNumber {
+export interface UnexpectedErrorFailure extends IFailure {
   type: 'UNEXPECTED_ERROR';
   message: string;
 }
 
-export interface WrongErrorFailure extends LineNumber {
+export interface WrongErrorFailure extends IFailure {
   type: 'WRONG_ERROR';
   expectedMessage: string;
   actualMessage: string;
 }
 
-export interface MissingErrorFailure extends LineNumber {
+export interface MissingErrorFailure extends IFailure {
   type: 'MISSING_ERROR';
   message: string;
 }
