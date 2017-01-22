@@ -15,9 +15,13 @@ import checkFile from './checker';
 
 const [,, tsFile] = process.argv;
 
-// TODO: read options from a tsconfig.json file.
-const options: ts.CompilerOptions = {};
-const host = ts.createCompilerHost(options, true);
+// read options from a tsconfig.json file.
+let host = ts.createCompilerHost({}, true);
+const options: ts.CompilerOptions = ts.readConfigFile('tsconfig.json', (path: string) => host.readFile(path)).config['compilerOptions'];
+// console.log(options);
+if (options) {
+  host = ts.createCompilerHost(options, true);
+}
 
 const program = ts.createProgram([tsFile], options, host);
 
