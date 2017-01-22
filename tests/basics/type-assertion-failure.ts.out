@@ -1,4 +1,4 @@
-tests/basics/type-assertion-failure.ts:3: Expected type
+tests/basics/type-assertion-failure.ts:6: Expected type
   string
 but got:
   number

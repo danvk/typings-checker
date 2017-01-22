@@ -4,7 +4,8 @@
         "target": "es5",
         "noImplicitAny": true,
         "sourceMap": true,
-        "noEmit": true
+        "noUnusedLocals": true,
+        "noEmit": false
     },
     "exclude": [
         "sample.ts",
