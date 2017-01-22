@@ -122,7 +122,7 @@ export function attachNodesToAssertions(
 
   collectNodes(source);
   if (assertions.length) {
-    console.error(assertions);
+    console.error(assertions.map(o => _.update(o, 'line', (i: number) => i + 1)));
     throw new Error('Unable to attach nodes to all assertions.');
   }
 
