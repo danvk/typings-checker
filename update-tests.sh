@@ -9,6 +9,9 @@ for test in $(find tests -name '*.ts'); do
   rc=${PIPESTATUS[0]}; if [[ $rc != 0 ]]; then exit $rc; fi
 done
 
+# test wrong file path
+node dist/index.js doesnt_exist.ts > doesnt_exist.ts.out 2>&1
+
 # This shows changes and sets the exit code.
 set -o errexit
 git status
