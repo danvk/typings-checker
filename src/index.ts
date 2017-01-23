@@ -10,22 +10,9 @@
  */
 
 import * as ts from 'typescript';
-import * as _ from 'lodash';
-const argv = require('yargs')
-  .usage('Usage: <file> [options]')
-
-  .alias('l', 'noLines')
-  .describe('l', 'skip line numbers in output to keep it more diff-friendly')
-
-  .alias('v', 'verbose')
-  .describe('v', 'also print relevant code')
-
-  .argv;
-
 import checkFile from './checker';
 
-const [tsFile] = argv._;
-const { noLines, verbose } = argv;
+const [,,tsFile] = process.argv;
 
 // read options from a tsconfig.json file.
 const options: ts.CompilerOptions = ts.readConfigFile('tsconfig.json', ts.sys.readFile).config['compilerOptions'] || {};
@@ -63,7 +50,7 @@ for (const failure of report.failures) {
       message = `Expected type\n  ${failure.expectedType}\nbut got:\n  ${failure.actualType}`;
       break;
   }
-  console.error(`${tsFile}:${noLines ? '' : ((line + 1) + ':')}${verbose && code ? code + '\n\n' : ' '}${message}\n`);
+  console.error(`${tsFile}:${line+1}:${code ? code + '\n\n' : ' '}${message}\n`);
 }
 
 const numFailures = report.failures.length;
