@@ -10,7 +10,8 @@
  */
 
 import * as ts from 'typescript';
-let argv = require('yargs')
+import * as _ from 'lodash';
+const argv = require('yargs')
   .usage('Usage: <file> [options]')
 
   .alias('l', 'noLines')
@@ -29,7 +30,6 @@ const { noLines, verbose } = argv;
 // read options from a tsconfig.json file.
 let host = ts.createCompilerHost({}, true);
 const options: ts.CompilerOptions = ts.readConfigFile('tsconfig.json', (path: string) => host.readFile(path)).config['compilerOptions'];
-// console.log(options);
 if (options) {
   host = ts.createCompilerHost(options, true);
 }

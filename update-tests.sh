@@ -4,6 +4,7 @@ tsc
 set +o errexit
 
 for test in $(find tests -name '*.ts'); do
+  echo $test
   node src/index.js $test > $test.out 2>&1
   rc=${PIPESTATUS[0]}; if [[ $rc != 0 ]]; then exit $rc; fi
 done

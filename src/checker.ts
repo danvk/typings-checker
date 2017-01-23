@@ -1,6 +1,17 @@
 import * as ts from 'typescript';
 import * as _ from 'lodash';
-import { Assertion, TypeAssertion, ErrorAssertion, Failure, WrongTypeFailure, UnexpectedErrorFailure, WrongErrorFailure, MissingErrorFailure, NodedAssertion, Report } from './types';
+import {
+  Assertion,
+  TypeAssertion,
+  ErrorAssertion,
+  Failure,
+  WrongTypeFailure,
+  UnexpectedErrorFailure,
+  WrongErrorFailure,
+  MissingErrorFailure,
+  NodedAssertion,
+  Report,
+} from './types';
 
 // Extract information about the type/error assertions in a source file.
 // The scanner should be positioned at the start of the file.
@@ -49,7 +60,6 @@ export function attachNodesToAssertions(
       const pos = node.getStart();
       const { line } = source.getLineAndCharacterOfPosition(pos);
       const assertionIndex = _.findIndex(assertions, {line});
-      // console.warn(`checked for assertions at line ${line}: ${assertionIndex}`);
       if (assertionIndex >= 0) {
         const assertion = assertions[assertionIndex];
         const type = checker.getTypeAtLocation(node.getChildren()[0]);
@@ -64,13 +74,14 @@ export function attachNodesToAssertions(
 
   collectNodes(source);
   if (assertions.length) {
-    let prettyAssertions = assertions.map(o => {
-      const errorMap: { [k: string]: string } = {
-        type: `$ExpectType ${(<TypeAssertion>o).type}`,
-        error: `$ExpectError ${(<ErrorAssertion>o).pattern}`,
-      };
-      let msg: string = <string> errorMap[o.kind];
-      return `${o.line+1}: ${msg}`;
+    const prettyAssertions = assertions.map(assertion => {
+      let msg: string;
+      if (assertion.kind === 'type') {
+        msg = `$ExpectType ${assertion.type}`;
+      } else {
+        msg = `$ExpectError ${assertion.pattern}`
+      }
+      return `{assertion.line + 1}: ${msg}`;
     });
     console.error(JSON.stringify(prettyAssertions, null, '\t'));
     throw new Error('Unable to attach nodes to all assertions.');
@@ -83,7 +94,6 @@ export function generateReport(
   checker: ts.TypeChecker,
   nodedAssertions: NodedAssertion[],
   diagnostics: ts.Diagnostic[],
-  source: ts.SourceFile,
 ): Report {
   const failures = [] as Failure[];
   let numSuccesses = 0;
@@ -108,9 +118,8 @@ export function generateReport(
   // Go through and check all the assertions.
   for (const noded of nodedAssertions) {
     let { assertion, type, error, node } = noded;
-    let { pos, end } = node;
-    let code = source.text.substring(pos, end);
     const line = assertion.line;
+    let code = node.getText();
     // let base = { code, line };
     if (assertion.kind === 'error') {
       if (!error) {
@@ -168,5 +177,5 @@ export default function checkFile(
 ): Report {
   const assertions = extractAssertions(scanner, source);
   const nodedAssertions = attachNodesToAssertions(source, checker, assertions);
-  return generateReport(checker, nodedAssertions, diagnostics, source);
+  return generateReport(checker, nodedAssertions, diagnostics);
 }

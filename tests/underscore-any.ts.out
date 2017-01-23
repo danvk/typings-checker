@@ -1,24 +1,24 @@
-tests/underscore-any.ts:7:: Expected type
+tests/underscore-any.ts:7: Expected type
   number
 but got:
   any
 
-tests/underscore-any.ts:9:: Expected error
+tests/underscore-any.ts:9: Expected error
   Operator '==' cannot be applied to types 'number' and 'string'.
 but got:
   Parameter 'x' implicitly has an 'any' type.
 
-tests/underscore-any.ts:11:: Expected type
+tests/underscore-any.ts:11: Expected type
   number
 but got:
   any
 
-tests/underscore-any.ts:13:: Expected error
+tests/underscore-any.ts:13: Expected error
   Property 'y' does not exist on type '{ x: number; }'.
 but got:
   Parameter 'v' implicitly has an 'any' type.
 
-tests/underscore-any.ts:15:: Expected type
+tests/underscore-any.ts:15: Expected type
   { x: number; }
 but got:
   any
