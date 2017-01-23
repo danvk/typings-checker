@@ -28,11 +28,8 @@ const [tsFile] = argv._;
 const { noLines, verbose } = argv;
 
 // read options from a tsconfig.json file.
-let host = ts.createCompilerHost({}, true);
-const options: ts.CompilerOptions = ts.readConfigFile('tsconfig.json', (path: string) => host.readFile(path)).config['compilerOptions'];
-if (options) {
-  host = ts.createCompilerHost(options, true);
-}
+const options: ts.CompilerOptions = ts.readConfigFile('tsconfig.json', ts.sys.readFile).config['compilerOptions'] || {};
+let host = ts.createCompilerHost(options, true);
 
 const program = ts.createProgram([tsFile], options, host);
 
