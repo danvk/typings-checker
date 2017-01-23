@@ -1,30 +1,13 @@
-!/usr/bin / env;
-node;
-/**
- * This script reads a TypeScript file and verifies that it produces the expected types and errors.
- *
- * Usage:
- *
- *     typings-checker yourtsfile.ts
- *
- * The exit code indicates whether all assertions passed.
- */
-var ts = require('typescript');
-var _ = require('lodash');
-var argv = require('yargs')
-    .usage('Usage: <file> [options]')
-    .alias('l', 'noLines')
-    .describe('l', 'skip line numbers in output to keep it more diff-friendly')
-    .alias('v', 'verbose')
-    .describe('v', 'also print relevant code')
-    .argv;
-var checker_1 = require('./checker');
-var tsFile = argv._[0];
-var noLines = argv.noLines, verbose = argv.verbose;
+#!/usr/bin/env node
+"use strict";
+var ts = require("typescript");
+// import * as _ from 'lodash';
+var checker_1 = require("./checker");
+var _a = process.argv, tsFile = _a[2];
 // read options from a tsconfig.json file.
 var options = ts.readConfigFile('tsconfig.json', ts.sys.readFile).config['compilerOptions'] || {};
-var omittedOptions = ['lib']; // compiler options it tends to not like
-options = _.omit(options, omittedOptions);
+// const omittedOptions = ['lib']; // compiler options it tends to not like
+// options = <ts.CompilerOptions> _.omit(options, omittedOptions);
 var host = ts.createCompilerHost(options, true);
 var program = ts.createProgram([tsFile], options, host);
 var source = program.getSourceFile(tsFile);
@@ -36,8 +19,8 @@ var scanner = ts.createScanner(ts.ScriptTarget.ES5, false, ts.LanguageVariant.St
 var checker = program.getTypeChecker();
 var diagnostics = ts.getPreEmitDiagnostics(program);
 var report = checker_1.default(source, scanner, checker, diagnostics);
-for (var _i = 0, _a = report.failures; _i < _a.length; _i++) {
-    var failure = _a[_i];
+for (var _i = 0, _b = report.failures; _i < _b.length; _i++) {
+    var failure = _b[_i];
     var line = failure.line, code = failure.code;
     var message = void 0;
     switch (failure.type) {
@@ -54,7 +37,7 @@ for (var _i = 0, _a = report.failures; _i < _a.length; _i++) {
             message = "Expected type\n  " + failure.expectedType + "\nbut got:\n  " + failure.actualType;
             break;
     }
-    console.error(tsFile + ":" + (noLines ? '' : ((line + 1) + ':')) + (verbose && code ? code + '\n\n' : ' ') + message + "\n");
+    console.error(tsFile + ":" + (line + 1) + ":" + (code ? code + '\n\n' : ' ') + message + "\n");
 }
 var numFailures = report.failures.length;
 var numTotal = report.numSuccesses + numFailures;

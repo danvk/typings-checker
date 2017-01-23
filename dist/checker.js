@@ -1,9 +1,10 @@
-var ts = require('typescript');
-var _ = require('lodash');
+"use strict";
+var ts = require("typescript");
+var _ = require("lodash");
 // Extract information about the type/error assertions in a source file.
 // The scanner should be positioned at the start of the file.
 function extractAssertions(scanner, source) {
-    var assertions = [], as = Assertion[];
+    var assertions = [];
     var isFirstTokenOnLine = true;
     var lastLine = -1;
     while (scanner.scan() !== ts.SyntaxKind.EndOfFileToken) {
@@ -32,7 +33,7 @@ function extractAssertions(scanner, source) {
 }
 exports.extractAssertions = extractAssertions;
 function attachNodesToAssertions(source, checker, assertions) {
-    var nodedAssertions = [], as = NodedAssertion[];
+    var nodedAssertions = [];
     // Match assertions to the first node that appears on the line they apply to.
     function collectNodes(node) {
         if (node.kind !== ts.SyntaxKind.SourceFile) {
@@ -68,11 +69,11 @@ function attachNodesToAssertions(source, checker, assertions) {
 }
 exports.attachNodesToAssertions = attachNodesToAssertions;
 function generateReport(checker, nodedAssertions, diagnostics) {
-    var failures = [], as = Failure[];
+    var failures = [];
     var numSuccesses = 0;
     // Attach errors to nodes; if this isn't possible, then the error was unexpected.
-    for (var _i = 0; _i < diagnostics.length; _i++) {
-        var diagnostic = diagnostics[_i];
+    for (var _i = 0, diagnostics_1 = diagnostics; _i < diagnostics_1.length; _i++) {
+        var diagnostic = diagnostics_1[_i];
         var line = diagnostic.file && diagnostic.file.getLineAndCharacterOfPosition(diagnostic.start).line;
         var nodedAssertion = _.find(nodedAssertions, { assertion: { line: line } });
         if (nodedAssertion) {
@@ -88,8 +89,8 @@ function generateReport(checker, nodedAssertions, diagnostics) {
         }
     }
     // Go through and check all the assertions.
-    for (var _a = 0; _a < nodedAssertions.length; _a++) {
-        var noded = nodedAssertions[_a];
+    for (var _a = 0, nodedAssertions_1 = nodedAssertions; _a < nodedAssertions_1.length; _a++) {
+        var noded = nodedAssertions_1[_a];
         var assertion = noded.assertion, type = noded.type, error = noded.error, node = noded.node;
         var line = assertion.line;
         var code = node.getText();
@@ -149,5 +150,6 @@ function checkFile(source, scanner, checker, diagnostics) {
     var nodedAssertions = attachNodesToAssertions(source, checker, assertions);
     return generateReport(checker, nodedAssertions, diagnostics);
 }
+Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = checkFile;
 //# sourceMappingURL=checker.js.map
