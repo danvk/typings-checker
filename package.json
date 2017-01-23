@@ -2,13 +2,13 @@
   "name": "typings-checker",
   "version": "1.1.0",
   "description": "Positive and negative assertions about TypeScript types and errors",
-  "main": "src/index.js",
+  "main": "dist/index.js",
   "scripts": {
     "prepublish": "tsc",
     "test": "./update-tests.sh"
   },
   "bin": {
-    "typings-checker": "src/index.js"
+    "typings-checker": "dist/index.js"
   },
   "author": "Dan Vanderkam (danvdk@gmail.com)",
   "license": "ISC",
