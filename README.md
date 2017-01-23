@@ -31,6 +31,11 @@ An `$ExpectType` directive tests the type of the expression on the next line. Th
     npm install -g typings-checker
     typings-checker your-test.ts
 
+## options
+
+* `--noLines` (`-l`): hide line numbers in output -- useful if you don't want these clogging diff logs when you add or remove a line.
+* `--verbose` (`-v`): shows code samples around your errors. could be used as an alternative to the above.
+
 ## Development
 
 ```
