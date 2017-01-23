@@ -1,6 +1,6 @@
 #!/bin/bash
 set -o errexit
-tsc
+node_modules/.bin/tsc
 set +o errexit
 
 for test in $(find tests -name '*.ts'); do
