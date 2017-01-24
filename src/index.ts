@@ -18,10 +18,16 @@ const argv = yargs
     .usage('Usage: <file> [options]')
     .alias('p', 'project')
     .describe('p', 'Path to the tsconfig.json file for your project')
+    .boolean('allow-expect-error')
+    .describe('allow-expect-error',
+              'Enable $ExpectError assertions. Setting this option means that ' +
+              'it\'s possible for code to be accepted by typings-checker but not ' +
+              'tsc.')
     .argv;
 
 const [tsFile] = argv._;
 const { project } = argv;
+const allowExpectError = argv['allow-expect-error'];
 
 // read options from a tsconfig.json file.
 // TOOD: make this optional, just like tsc.
@@ -42,7 +48,11 @@ const scanner = ts.createScanner(
 const checker = program.getTypeChecker();
 const diagnostics = ts.getPreEmitDiagnostics(program);
 
-const report = checkFile(source, scanner, checker, diagnostics);
+const typingsOptions = {
+  allowExpectError,
+};
+
+const report = checkFile(source, scanner, checker, diagnostics, typingsOptions);
 
 for (const failure of report.failures) {
   const { line } = failure;
