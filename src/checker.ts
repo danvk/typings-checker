@@ -46,8 +46,11 @@ export function extractAssertions(
       const [, kind, text] = m;
 
       if (kind === 'Error' && !options.allowExpectError) {
-        throw new Error(`Found $ExpectError assertion at ${source.fileName}:${line
-          } but --allow-expect-error was not set.`);
+        const msg =
+            `${source.fileName}:${line} Found $ExpectError assertion but ` +
+            `--allow-expect-error was not set.`;
+        console.error(msg);
+        throw new Error(msg);
       }
       if (kind === 'Type') {
         assertions.push({ kind: 'type', type: text, line });

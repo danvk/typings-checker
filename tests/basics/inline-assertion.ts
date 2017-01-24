@@ -1,5 +1,4 @@
 // This checks the types of parameters to a callback using inline assertions.
-
 function mapObject<T, U>(
   o: T,
   callback: (val: T[keyof T], key: keyof T, collection: T) => U
@@ -13,3 +12,5 @@ mapObject({a: 1, b: 2}, (
   key,  // $ExpectType "a" | "b"
   c,  // $ExpectType { a: number; b: number; }
 ) => '' + val);
+
+export default null;
