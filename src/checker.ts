@@ -8,9 +8,17 @@ import {
   Report,
 } from './types';
 
+interface Options {
+  allowExpectError: boolean;
+}
+
 // Extract information about the type/error assertions in a source file.
 // The scanner should be positioned at the start of the file.
-export function extractAssertions(scanner: ts.Scanner, source: ts.SourceFile): Assertion[] {
+export function extractAssertions(
+  scanner: ts.Scanner,
+  source: ts.SourceFile,
+  options: Options,
+): Assertion[] {
   const assertions = [] as Assertion[];
 
   let isFirstTokenOnLine = true;
@@ -36,6 +44,11 @@ export function extractAssertions(scanner: ts.Scanner, source: ts.SourceFile): A
       }
 
       const [, kind, text] = m;
+
+      if (kind === 'Error' && !options.allowExpectError) {
+        throw new Error(`Found $ExpectError assertion at ${source.fileName}:${line
+          } but --allow-expect-error was not set.`);
+      }
       if (kind === 'Type') {
         assertions.push({ kind: 'type', type: text, line });
       } else if (kind === 'Error') {
@@ -173,8 +186,9 @@ export default function checkFile(
   scanner: ts.Scanner,
   checker: ts.TypeChecker,
   diagnostics: ts.Diagnostic[],
+  options: Options,
 ): Report {
-  const assertions = extractAssertions(scanner, source);
+  const assertions = extractAssertions(scanner, source, options);
   const nodedAssertions = attachNodesToAssertions(source, checker, assertions);
   return generateReport(checker, nodedAssertions, diagnostics);
 }

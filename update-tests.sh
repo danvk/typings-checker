@@ -5,7 +5,7 @@ set +o errexit
 
 for test in $(find tests -name '*.ts'); do
   echo $test
-  node dist/index.js --project tests/tsconfig.json $test > $test.out 2>&1
+  node dist/index.js --allow-expect-error --project tests/tsconfig.json $test > $test.out 2>&1
 done
 
 # test wrong file path
