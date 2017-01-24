@@ -29,7 +29,16 @@ An `$ExpectType` directive tests the type of the expression on the next line. Th
 ## Usage
 
     npm install -g typings-checker
-    typings-checker your-test.ts
+    typings-checker --project tsconfig.json your-test.ts
+    
+## Options
+
+    --project
+      Path to the relevant tsconfig.json file
+    
+    --allow-expect-error
+      Enables $ExpectError assertions. These can help pin down behavior but they
+      also prevent tsc from running over your assertions. Disabled by default.
 
 ## Development
 
