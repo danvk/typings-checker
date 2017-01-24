@@ -40,5 +40,5 @@ jspm_packages
 .vscode/
 
 # Generated JS files
-src/*.js
-src/*.js.map
+dist/
+

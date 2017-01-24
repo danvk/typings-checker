@@ -1,11 +1,15 @@
 #!/bin/bash
 set -o errexit
-tsc
+node_modules/.bin/tsc
 set +o errexit
 
 for test in $(find tests -name '*.ts'); do
-  node src/index.js $test > $test.out 2>&1
+  echo $test
+  node dist/index.js --project tests/tsconfig.json $test > $test.out 2>&1
 done
+
+# test wrong file path
+node dist/index.js doesnt_exist.ts > tests/doesnt-exist.ts.out 2>&1
 
 # This shows changes and sets the exit code.
 set -o errexit

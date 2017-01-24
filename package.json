@@ -2,12 +2,13 @@
   "name": "typings-checker",
   "version": "1.1.1",
   "description": "Positive and negative assertions about TypeScript types and errors",
-  "main": "src/index.js",
+  "main": "dist/index.js",
   "scripts": {
+    "prepublish": "tsc",
     "test": "./update-tests.sh"
   },
   "bin": {
-    "typings-checker": "src/index.js"
+    "typings-checker": "dist/index.js"
   },
   "author": "Dan Vanderkam (danvdk@gmail.com)",
   "license": "ISC",
@@ -21,12 +22,17 @@
     "@types/lodash": "^4.14.47",
     "@types/mocha": "^2.2.36",
     "@types/node": "^7.0.0",
+    "@types/yargs": "^6.5.0",
     "chai": "^3.5.0",
     "mocha": "^3.2.0",
-    "ts-node": "^2.0.0"
+    "ts-node": "^2.0.0",
+    "typescript": "^2.1.4"
   },
   "dependencies": {
     "lodash": "^4.17.4",
-    "typescript": "^2.1.4"
+    "yargs": "^6.6.0"
+  },
+  "peerDependencies": {
+    "typescript": "2.x"
   }
 }
