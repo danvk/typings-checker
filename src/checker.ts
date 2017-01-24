@@ -1,59 +1,17 @@
 import * as ts from 'typescript';
 import * as _ from 'lodash';
-
-interface TypeAssertion {
-  kind: 'type';
-  type: string;
-  line: number;  // line that the assertion applies to; 0-based.
-}
-
-interface ErrorAssertion {
-  kind: 'error';
-  pattern: string;
-  line: number;  // line that the assertion applies to; 0-based.
-}
-
-type Assertion = TypeAssertion | ErrorAssertion;
-
-export interface NodedAssertion {
-  assertion: Assertion;
-  node: ts.Node;
-  type: ts.Type;
-  error?: ts.Diagnostic;
-}
-
-interface LineNumber {
-  line: number;  // 0-based
-}
-
-export interface WrongTypeFailure extends LineNumber {
-  type: 'WRONG_TYPE';
-  expectedType: string;
-  actualType: string;
-}
-
-export interface UnexpectedErrorFailure extends LineNumber {
-  type: 'UNEXPECTED_ERROR';
-  message: string;
-}
-
-export interface WrongErrorFailure extends LineNumber {
-  type: 'WRONG_ERROR';
-  expectedMessage: string;
-  actualMessage: string;
-}
-
-export interface MissingErrorFailure extends LineNumber {
-  type: 'MISSING_ERROR';
-  message: string;
-}
-
-type Failure = WrongTypeFailure | UnexpectedErrorFailure | WrongErrorFailure | MissingErrorFailure;
-
-export interface Report {
-  numSuccesses: number;
-  failures: Failure[];
-}
+import {
+  Assertion,
+  TypeAssertion,
+  ErrorAssertion,
+  Failure,
+  WrongTypeFailure,
+  UnexpectedErrorFailure,
+  WrongErrorFailure,
+  MissingErrorFailure,
+  NodedAssertion,
+  Report,
+} from './types';
 
 // Extract information about the type/error assertions in a source file.
 // The scanner should be positioned at the start of the file.
@@ -120,7 +78,16 @@ export function attachNodesToAssertions(
 
   collectNodes(source);
   if (assertions.length) {
-    console.error(assertions);
+    const prettyAssertions = assertions.map(assertion => {
+      let msg: string;
+      if (assertion.kind === 'type') {
+        msg = `$ExpectType ${assertion.type}`;
+      } else {
+        msg = `$ExpectError ${assertion.pattern}`
+      }
+      return `{assertion.line + 1}: ${msg}`;
+    });
+    console.error(JSON.stringify(prettyAssertions, null, '\t'));
     throw new Error('Unable to attach nodes to all assertions.');
   }
 
@@ -137,7 +104,7 @@ export function generateReport(
 
   // Attach errors to nodes; if this isn't possible, then the error was unexpected.
   for (const diagnostic of diagnostics) {
-    let { line } = diagnostic.file.getLineAndCharacterOfPosition(diagnostic.start);
+    let line = diagnostic.file && diagnostic.file.getLineAndCharacterOfPosition(diagnostic.start).line;
 
     const nodedAssertion = _.find(nodedAssertions, {assertion: {line}});
     if (nodedAssertion) {
@@ -153,13 +120,17 @@ export function generateReport(
   }
 
   // Go through and check all the assertions.
-  for (const {assertion, type, error} of nodedAssertions) {
+  for (const noded of nodedAssertions) {
+    let { assertion, type, error, node } = noded;
     const line = assertion.line;
+    let code = node.getText();
+    // let base = { code, line };
     if (assertion.kind === 'error') {
       if (!error) {
         failures.push({
           type: 'MISSING_ERROR',
           line,
+          code,
           message: assertion.pattern
         });
       } else {
@@ -168,6 +139,7 @@ export function generateReport(
           failures.push({
             type: 'WRONG_ERROR',
             line,
+            code,
             expectedMessage: assertion.pattern,
             actualMessage: message,
           });
@@ -181,6 +153,7 @@ export function generateReport(
         failures.push({
           type: 'WRONG_TYPE',
           line,
+          code,
           expectedType: assertion.type,
           actualType,
         })

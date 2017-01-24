@@ -10,18 +10,21 @@
  */
 
 import * as ts from 'typescript';
-
 import checkFile from './checker';
 
-const [,, tsFile] = process.argv;
+const [,,tsFile] = process.argv;
 
-// TODO: read options from a tsconfig.json file.
-const options: ts.CompilerOptions = {};
-const host = ts.createCompilerHost(options, true);
+// read options from a tsconfig.json file.
+const options: ts.CompilerOptions = ts.readConfigFile('tsconfig.json', ts.sys.readFile).config['compilerOptions'] || {};
+let host = ts.createCompilerHost(options, true);
 
 const program = ts.createProgram([tsFile], options, host);
 
 const source = program.getSourceFile(tsFile);
+if (!source) {
+  console.error(`could not load content of ${tsFile}`);
+  process.exit(1);
+}
 const scanner = ts.createScanner(
     ts.ScriptTarget.ES5, false, ts.LanguageVariant.Standard, source.getFullText());
 
@@ -31,7 +34,7 @@ const diagnostics = ts.getPreEmitDiagnostics(program);
 const report = checkFile(source, scanner, checker, diagnostics);
 
 for (const failure of report.failures) {
-  const { line } = failure;
+  const { line, code } = failure;
   let message: string;
   switch (failure.type) {
     case 'UNEXPECTED_ERROR':
@@ -47,7 +50,7 @@ for (const failure of report.failures) {
       message = `Expected type\n  ${failure.expectedType}\nbut got:\n  ${failure.actualType}`;
       break;
   }
-  console.error(`${tsFile}:${line + 1}: ${message}\n`);
+  console.error(`${tsFile}:${line+1}:${code ? code + '\n\n' : ' '}${message}\n`);
 }
 
 const numFailures = report.failures.length;
