@@ -1,0 +1,31 @@
+{
+  "extends": [
+    "tslint:recommended"
+  ],
+  "rules": {
+    // Rules where we disagree with tslint:recommended
+    "curly": false,
+    "quotemark": [true, "single", "jsx-single", "avoid-escape" ],
+    "indent": [true, "spaces"],
+    "triple-equals": true,
+    "max-line-length": [true, 100],
+    "interface-name": false,
+    "object-literal-sort-keys": false,
+    // no parens required around one param lambdas.
+    "arrow-parens": [true, "ban-single-arg-parens"],
+    "only-arrow-functions": [
+      true,
+      "allow-named-functions"
+    ],
+    "no-console": false,
+    "switch-default": false,
+
+    // New rules that we add beyond tslint:recommended
+    "no-angle-bracket-type-assertion": true,
+    "interface-over-type-literal": true,
+    "space-before-function-paren": [true, "never"],
+    "import-spacing": true,
+    "no-string-throw": true,
+    "prefer-const": true
+  }
+}
