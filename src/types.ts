@@ -54,7 +54,11 @@ export interface MissingErrorFailure extends IFailure {
   message: string;
 }
 
-export type Failure = WrongTypeFailure | UnexpectedErrorFailure | WrongErrorFailure | MissingErrorFailure;
+export type Failure =
+    WrongTypeFailure |
+    UnexpectedErrorFailure |
+    WrongErrorFailure |
+    MissingErrorFailure;
 
 export interface Report {
   numSuccesses: number;

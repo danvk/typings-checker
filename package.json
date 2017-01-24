@@ -5,7 +5,8 @@
   "main": "dist/index.js",
   "scripts": {
     "prepublish": "tsc",
-    "test": "./update-tests.sh"
+    "lint": "tslint src/*.ts",
+    "test": "yarn lint && ./update-tests.sh"
   },
   "bin": {
     "typings-checker": "dist/index.js"
@@ -26,6 +27,7 @@
     "chai": "^3.5.0",
     "mocha": "^3.2.0",
     "ts-node": "^2.0.0",
+    "tslint": "^4.3.1",
     "typescript": "^2.1.4"
   },
   "dependencies": {

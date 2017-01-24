@@ -1,5 +1,5 @@
-import * as ts from 'typescript';
 import * as _ from 'lodash';
+import * as ts from 'typescript';
 
 import {
   Assertion,
@@ -49,7 +49,7 @@ export function extractAssertions(scanner: ts.Scanner, source: ts.SourceFile): A
 export function attachNodesToAssertions(
   source: ts.SourceFile,
   checker: ts.TypeChecker,
-  assertions: Assertion[]
+  assertions: Assertion[],
 ): NodedAssertion[] {
   const nodedAssertions = [] as NodedAssertion[];
 
@@ -67,7 +67,7 @@ export function attachNodesToAssertions(
       }
     }
 
-    ts.forEachChild(node, node => { collectNodes(node); });
+    ts.forEachChild(node, child => { collectNodes(child); });
     return nodedAssertions;
   }
 
@@ -78,7 +78,7 @@ export function attachNodesToAssertions(
       if (assertion.kind === 'type') {
         msg = `$ExpectType ${assertion.type}`;
       } else {
-        msg = `$ExpectError ${assertion.pattern}`
+        msg = `$ExpectError ${assertion.pattern}`;
       }
       return `{assertion.line + 1}: ${msg}`;
     });
@@ -99,33 +99,34 @@ export function generateReport(
 
   // Attach errors to nodes; if this isn't possible, then the error was unexpected.
   for (const diagnostic of diagnostics) {
-    let line = diagnostic.file && diagnostic.file.getLineAndCharacterOfPosition(diagnostic.start).line;
+    const line = diagnostic.file &&
+        diagnostic.file.getLineAndCharacterOfPosition(diagnostic.start).line;
 
     const nodedAssertion = _.find(nodedAssertions, {assertion: {line}});
     if (nodedAssertion) {
       nodedAssertion.error = diagnostic;
     } else {
-      let message = ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n');
+      const message = ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n');
       failures.push({
         type: 'UNEXPECTED_ERROR',
-        line: line,
+        line,
         message,
-      })
+      });
     }
   }
 
   // Go through and check all the assertions.
   for (const noded of nodedAssertions) {
-    let { assertion, type, error, node } = noded;
+    const { assertion, type, error, node } = noded;
     const line = assertion.line;
-    let code = node.getText();
+    const code = node.getText();
     if (assertion.kind === 'error') {
       if (!error) {
         failures.push({
           type: 'MISSING_ERROR',
           line,
           code,
-          message: assertion.pattern
+          message: assertion.pattern,
         });
       } else {
         const message = ts.flattenDiagnosticMessageText(error.messageText, '\n');
@@ -150,7 +151,7 @@ export function generateReport(
           code,
           expectedType: assertion.type,
           actualType,
-        })
+        });
       } else {
         numSuccesses++;
       }
@@ -171,7 +172,7 @@ export default function checkFile(
   source: ts.SourceFile,
   scanner: ts.Scanner,
   checker: ts.TypeChecker,
-  diagnostics: ts.Diagnostic[]
+  diagnostics: ts.Diagnostic[],
 ): Report {
   const assertions = extractAssertions(scanner, source);
   const nodedAssertions = attachNodesToAssertions(source, checker, assertions);
