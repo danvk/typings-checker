@@ -12,10 +12,18 @@
 import * as ts from 'typescript';
 import checkFile from './checker';
 
-const [,,tsFile] = process.argv;
+const argv = require('yargs')
+    .usage('Usage: <file> [options]')
+    .alias('p', 'project')
+    .describe('p', 'Path to the tsconfig.json file for your project')
+    .argv;
+
+const [tsFile] = argv._;
+const { project } = argv;
 
 // read options from a tsconfig.json file.
-const options: ts.CompilerOptions = ts.readConfigFile('tsconfig.json', ts.sys.readFile).config['compilerOptions'] || {};
+// TOOD: make this optional, just like tsc.
+const options: ts.CompilerOptions = ts.readConfigFile(project || 'tsconfig.json', ts.sys.readFile).config['compilerOptions'] || {};
 let host = ts.createCompilerHost(options, true);
 
 const program = ts.createProgram([tsFile], options, host);
@@ -34,7 +42,7 @@ const diagnostics = ts.getPreEmitDiagnostics(program);
 const report = checkFile(source, scanner, checker, diagnostics);
 
 for (const failure of report.failures) {
-  const { line, code } = failure;
+  const { line } = failure;
   let message: string;
   switch (failure.type) {
     case 'UNEXPECTED_ERROR':
@@ -50,7 +58,7 @@ for (const failure of report.failures) {
       message = `Expected type\n  ${failure.expectedType}\nbut got:\n  ${failure.actualType}`;
       break;
   }
-  console.error(`${tsFile}:${line+1}:${code ? code + '\n\n' : ' '}${message}\n`);
+  console.error(`${tsFile}:${line+1}: ${message}\n`);
 }
 
 const numFailures = report.failures.length;

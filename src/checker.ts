@@ -1,14 +1,9 @@
 import * as ts from 'typescript';
 import * as _ from 'lodash';
+
 import {
   Assertion,
-  TypeAssertion,
-  ErrorAssertion,
   Failure,
-  WrongTypeFailure,
-  UnexpectedErrorFailure,
-  WrongErrorFailure,
-  MissingErrorFailure,
   NodedAssertion,
   Report,
 } from './types';
@@ -124,7 +119,6 @@ export function generateReport(
     let { assertion, type, error, node } = noded;
     const line = assertion.line;
     let code = node.getText();
-    // let base = { code, line };
     if (assertion.kind === 'error') {
       if (!error) {
         failures.push({

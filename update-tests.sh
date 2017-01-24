@@ -5,12 +5,11 @@ set +o errexit
 
 for test in $(find tests -name '*.ts'); do
   echo $test
-  node dist/index.js $test > $test.out 2>&1
-  rc=${PIPESTATUS[0]}; if [[ $rc != 0 ]]; then exit $rc; fi
+  node dist/index.js --project tests/tsconfig.json $test > $test.out 2>&1
 done
 
 # test wrong file path
-node dist/index.js doesnt_exist.ts > doesnt_exist.ts.out 2>&1
+node dist/index.js doesnt_exist.ts > tests/doesnt-exist.ts.out 2>&1
 
 # This shows changes and sets the exit code.
 set -o errexit
