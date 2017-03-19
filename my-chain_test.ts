@@ -13,4 +13,14 @@ const v3 = chain({a: 1, b: 2})
   .map((val, k) => k + val)
   .sum();
 
-console.log(v, v2, v3);
+const v4 = chain([1, 2, 3, 4])
+  .map(v => ({val: v, sqr: v * v, str: '' + v}))
+  .map('sqr')
+  .sum();
+
+const v5 = chain([1, 2, 3, 4])
+  .map(v => ({val: v, sqr: v * v, str: '' + v}))
+  .map('str')
+  .value();
+
+console.log(v, v2, v3, v4, v5);

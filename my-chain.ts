@@ -10,6 +10,7 @@ declare module 'chain' {
   }
 
   interface WrappedArray<T> extends WrappedValue<T[]> {
+    map<U extends object>(fn: (x: T) => U): WrappedArrayOfObjects<U>;
     map<U>(fn: (x: T) => U): WrappedArray<U>;
     filter(fn: (x: T) => boolean): WrappedArray<T>;
 
@@ -18,6 +19,10 @@ declare module 'chain' {
     reduce<U>(fn: (acc: U, v: T) => U, base: U): WrappedValue<U>;
 
     sum(): T;  // ideally this would only work for string or number.
+  }
+
+  interface WrappedArrayOfObjects<U> extends WrappedArray<U> {
+    map<K extends keyof U>(fn: K): WrappedArray<U[K]>;
   }
 
   function chain<T>(obj: T[]): WrappedArray<T>;
