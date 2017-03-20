@@ -15,7 +15,7 @@ declare module 'chain' {
     filter(fn: (x: T, i: number) => boolean): WrappedArray<T>;
 
     reduce<U>(fn: (acc: U[], v: T) => U[], base: U[]): WrappedArray<U>;
-    reduce<U extends object>(fn: (acc: U[], v: T) => U[], base: U[]): WrappedObject<U>;
+    reduce<U extends object>(fn: (acc: U, v: T) => U, base: U): WrappedObject<U>;
     reduce<U>(fn: (acc: U, v: T) => U, base: U): WrappedValue<U>;
 
     sum(): T;  // ideally this would only work for string or number.
