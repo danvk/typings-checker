@@ -10,9 +10,9 @@ declare module 'chain' {
   }
 
   interface WrappedArray<T> extends WrappedValue<T[]> {
-    map<U extends object>(fn: (x: T) => U): WrappedArrayOfObjects<U>;
-    map<U>(fn: (x: T) => U): WrappedArray<U>;
-    filter(fn: (x: T) => boolean): WrappedArray<T>;
+    map<U extends object>(fn: (x: T, i: number) => U): WrappedArrayOfObjects<U>;
+    map<U>(fn: (x: T, i: number) => U): WrappedArray<U>;
+    filter(fn: (x: T, i: number) => boolean): WrappedArray<T>;
 
     reduce<U>(fn: (acc: U[], v: T) => U[], base: U[]): WrappedArray<U>;
     reduce<U extends object>(fn: (acc: U[], v: T) => U[], base: U[]): WrappedObject<U>;
@@ -25,6 +25,7 @@ declare module 'chain' {
     map<K extends keyof U>(fn: K): WrappedArray<U[K]>;
   }
 
+  function chain<T extends object>(obj: T[]): WrappedArrayOfObjects<T>;
   function chain<T>(obj: T[]): WrappedArray<T>;
   function chain<T extends object>(obj: T): WrappedObject<T>;
   function chain<T>(obj: T): WrappedValue<T>;
