@@ -24,7 +24,8 @@ const v5 = chain([1, 2, 3, 4])
   .value();
 
 const v6 = chain([{a: 1}, {a: 2}, {a: 3, b: 2}, {a: 4, b: 1}])
-  .filter((v, k) => 'b' in v)
-  .map('b');  // oops! not an array of objects.
+  .filter((v, i) => 'b' in v)
+  .map('a')  // oops! not an array of objects.
+  .value();
 
-console.log(v, v2, v3, v4, v5);
+console.log(v, v2, v3, v4, v5, v6);

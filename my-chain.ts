@@ -23,6 +23,7 @@ declare module 'chain' {
 
   interface WrappedArrayOfObjects<U> extends WrappedArray<U> {
     map<K extends keyof U>(fn: K): WrappedArray<U[K]>;
+    filter(fn: (x: U, i: number) => boolean): WrappedArrayOfObjects<U>;
   }
 
   function chain<T extends object>(obj: T[]): WrappedArrayOfObjects<T>;
