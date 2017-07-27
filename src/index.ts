@@ -37,7 +37,7 @@ const host = ts.createCompilerHost(options, true);
 
 const program = ts.createProgram(tsFiles, options, host);
 let totalNumFailures = 0;
-tsFiles.forEach((tsFile:string) => {
+tsFiles.forEach((tsFile: string) => {
     const source = program.getSourceFile(tsFile);
     if (!source) {
       console.error(`could not load content of ${tsFile}`);
