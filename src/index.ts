@@ -35,49 +35,50 @@ const options: ts.CompilerOptions = ts.readConfigFile(project || 'tsconfig.json'
     .config.compilerOptions || {};
 const host = ts.createCompilerHost(options, true);
 
-const program = ts.createProgram(tsFiles, options, host);
 let totalNumFailures = 0;
 tsFiles.forEach((tsFile: string) => {
-    const source = program.getSourceFile(tsFile);
-    if (!source) {
-      console.error(`could not load content of ${tsFile}`);
-      process.exit(1);
+
+  const program = ts.createProgram([tsFile], options, host);
+  const source = program.getSourceFile(tsFile);
+  if (!source) {
+    console.error(`could not load content of ${tsFile}`);
+    process.exit(1);
+  }
+  const scanner = ts.createScanner(
+      ts.ScriptTarget.ES5, false, ts.LanguageVariant.Standard, source.getFullText());
+
+  const checker = program.getTypeChecker();
+  const diagnostics = ts.getPreEmitDiagnostics(program);
+
+  const typingsOptions = {
+    allowExpectError,
+  };
+
+  const report = checkFile(source, scanner, checker, diagnostics, typingsOptions);
+  for (const failure of report.failures) {
+    const { line } = failure;
+    let message: string;
+    switch (failure.type) {
+      case 'UNEXPECTED_ERROR':
+        message = `Unexpected error\n  ${failure.message}`;
+        break;
+      case 'MISSING_ERROR':
+        message = `Expected error ${failure.message}`;
+        break;
+      case 'WRONG_ERROR':
+        message = `Expected error\n  ${failure.expectedMessage
+            }\nbut got:\n  ${failure.actualMessage}`;
+        break;
+      case 'WRONG_TYPE':
+        message = `Expected type\n  ${failure.expectedType}\nbut got:\n  ${failure.actualType}`;
+        break;
     }
-    const scanner = ts.createScanner(
-        ts.ScriptTarget.ES5, false, ts.LanguageVariant.Standard, source.getFullText());
+    console.error(`${tsFile}:${line + 1}: ${message}\n`);
+  }
 
-    const checker = program.getTypeChecker();
-    const diagnostics = ts.getPreEmitDiagnostics(program);
-
-    const typingsOptions = {
-      allowExpectError,
-    };
-
-    const report = checkFile(source, scanner, checker, diagnostics, typingsOptions);
-    for (const failure of report.failures) {
-      const { line } = failure;
-      let message: string;
-      switch (failure.type) {
-        case 'UNEXPECTED_ERROR':
-          message = `Unexpected error\n  ${failure.message}`;
-          break;
-        case 'MISSING_ERROR':
-          message = `Expected error ${failure.message}`;
-          break;
-        case 'WRONG_ERROR':
-          message = `Expected error\n  ${failure.expectedMessage
-              }\nbut got:\n  ${failure.actualMessage}`;
-          break;
-        case 'WRONG_TYPE':
-          message = `Expected type\n  ${failure.expectedType}\nbut got:\n  ${failure.actualType}`;
-          break;
-      }
-      console.error(`${tsFile}:${line + 1}: ${message}\n`);
-    }
-
-    const numFailures = report.failures.length;
-    const numTotal = report.numSuccesses + numFailures;
-    console.log(`${tsFile}: ${report.numSuccesses} / ${numTotal} checks passed.`);
-    totalNumFailures = totalNumFailures + numFailures;
+  const numFailures = report.failures.length;
+  const numTotal = report.numSuccesses + numFailures;
+  console.log(`${tsFile}: ${report.numSuccesses} / ${numTotal} checks passed.`);
+  totalNumFailures = totalNumFailures + numFailures;
 });
 process.exit(totalNumFailures);

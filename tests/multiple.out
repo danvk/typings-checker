@@ -1,0 +1,36 @@
+tests/basics/expected-error.ts: 1 / 1 checks passed.
+tests/basics/inline-assertion.ts: 4 / 4 checks passed.
+tests/basics/sanity.ts: 0 / 0 checks passed.
+tests/basics/type-assertion-failure.ts:6: Expected type
+  string
+but got:
+  number
+
+tests/basics/type-assertion-failure.ts: 0 / 1 checks passed.
+tests/basics/type-assertion.ts: 1 / 1 checks passed.
+tests/basics/unexpected-error.ts:5: Unexpected error
+  Property 'c' does not exist on type '{ a: string; b: number; }'.
+
+tests/basics/unexpected-error.ts: 0 / 1 checks passed.
+tests/ramda.ts: 3 / 3 checks passed.
+tests/underscore-any.ts:7: Expected type
+  number
+but got:
+  any
+
+tests/underscore-any.ts:9: Expected error Operator '==' cannot be applied to types 'number' and 'string'.
+
+tests/underscore-any.ts:11: Expected type
+  number
+but got:
+  any
+
+tests/underscore-any.ts:13: Expected error Property 'y' does not exist on type '{ x: number; }'.
+
+tests/underscore-any.ts:15: Expected type
+  { x: number; }
+but got:
+  any
+
+tests/underscore-any.ts: 0 / 5 checks passed.
+tests/underscore.ts: 5 / 5 checks passed.

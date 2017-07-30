@@ -42,3 +42,4 @@ jspm_packages
 # Generated JS files
 dist/
 
+.idea
