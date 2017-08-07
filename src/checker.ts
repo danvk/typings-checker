@@ -115,7 +115,7 @@ export function generateReport(
     const line = diagnostic.file &&
         diagnostic.file.getLineAndCharacterOfPosition(diagnostic.start).line;
 
-    const nodedAssertion = _.find(nodedAssertions, {assertion: {line}});
+    const nodedAssertion = _.find(nodedAssertions, {assertion: {line}} as any);
     if (nodedAssertion) {
       nodedAssertion.error = diagnostic;
     } else {
