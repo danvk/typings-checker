@@ -23,7 +23,13 @@ const argv = yargs
               'Enable $ExpectError assertions. Setting this option means that ' +
               'it\'s possible for code to be accepted by typings-checker but not ' +
               'tsc.')
+    .help()
     .argv;
+
+if (argv._.length === 0) {
+    yargs.showHelp();
+    process.exit(-1);
+}
 
 const [tsFile] = argv._;
 const { project } = argv;
