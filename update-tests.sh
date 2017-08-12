@@ -8,6 +8,9 @@ for test in $(find tests -name '*.ts'); do
   node dist/index.js --allow-expect-error --project tests/tsconfig.json $test > $test.out 2>&1
 done
 
+echo "testing multiple files"
+node dist/index.js --allow-expect-error --project tests/tsconfig.json $(find tests -name '*.ts') > tests/multiple.out 2>&1
+
 # test wrong file path
 node dist/index.js doesnt_exist.ts > tests/doesnt-exist.ts.out 2>&1
 
