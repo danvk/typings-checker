@@ -1,15 +1,15 @@
 {
   "name": "typings-checker",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Positive and negative assertions about TypeScript types and errors",
   "main": "dist/index.js",
-    "bugs": {
-        "url": "https://github.com/danvk/typings-checker/issues"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git@github.com:danvk/typings-checker.git"
-    },
+  "bugs": {
+    "url": "https://github.com/danvk/typings-checker/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:danvk/typings-checker.git"
+  },
   "scripts": {
     "prepublish": "tsc",
     "lint": "tslint src/*.ts",
