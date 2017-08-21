@@ -29,7 +29,7 @@ An `$ExpectType` directive tests the type of the expression on the next line. Th
 ## Usage
 
     npm install -g typings-checker
-    typings-checker --project tsconfig.json your-test.ts
+    typings-checker --project tsconfig.json your-test.ts your-second-test.ts
     
 ## Options
 
