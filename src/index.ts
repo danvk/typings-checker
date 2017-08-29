@@ -37,10 +37,9 @@ const allowExpectError = argv['allow-expect-error'];
 
 // read options from a tsconfig.json file.
 // TOOD: make this optional, just like tsc.
-const options: ts.CompilerOptions = ts.readConfigFile(project || 'tsconfig.json', ts.sys.readFile)
-    .config.compilerOptions || {};
+const unParsedConfig = ts.readConfigFile(project || 'tsconfig.json', ts.sys.readFile).config || {};
+const { options } = ts.parseJsonConfigFileContent(unParsedConfig, ts.sys, process.cwd());
 const host = ts.createCompilerHost(options, true);
-
 let totalNumFailures = 0;
 tsFiles.forEach((tsFile: string) => {
 
@@ -50,8 +49,9 @@ tsFiles.forEach((tsFile: string) => {
     console.error(`could not load content of ${tsFile}`);
     process.exit(1);
   }
+  const languageVersion = options.target || ts.ScriptTarget.ES5;
   const scanner = ts.createScanner(
-      ts.ScriptTarget.ES5, false, ts.LanguageVariant.Standard, source.getFullText());
+    languageVersion, false, source.languageVariant, source.getFullText());
 
   const checker = program.getTypeChecker();
   const diagnostics = ts.getPreEmitDiagnostics(program);
