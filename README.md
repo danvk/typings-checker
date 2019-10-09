@@ -1,3 +1,7 @@
+# This is not maintained! Check out [dtslint](https://github.com/microsoft/dtslint) and [tsd](https://github.com/SamVerschueren/tsd).
+
+----
+
 # typings-checker [![CircleCI](https://circleci.com/gh/danvk/typings-checker.svg?style=svg)](https://circleci.com/gh/danvk/typings-checker)
 
 The [tests in DefinitelyTyped][1] verify that correct code type checks.
